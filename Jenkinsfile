@@ -41,5 +41,10 @@ pipeline {
                 archiveArtifacts(artifacts: 'frontend/dist/frontend/*')
             }
         }
+        stage('Notification to the bundle about the assembly') {
+            steps {
+                curl -X POST -H 'Content-type: application/json' --data '{"message":"Зачитайлов Андрей собрал  приложение."}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1
+            }
+        }
     }
 }
