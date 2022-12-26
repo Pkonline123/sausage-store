@@ -6,9 +6,9 @@ pipeline {
     }
 
     tools {
-        maven 'Java-3.20' // Для сборки бэкенда нужен Maven
+        maven 'Java-3.8.6' // Для сборки бэкенда нужен Maven
         jdk 'JDK16' // И Java Developer Kit нужной версии
-        nodejs 'NodeJs-18.12.1' // А NodeJS нужен для фронта
+        nodejs 'NodeJs-18' // А NodeJS нужен для фронта
     }
 
     stages {
