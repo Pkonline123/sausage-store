@@ -38,7 +38,7 @@ pipeline {
         stage('Save artifacts') {
             steps {
                 archiveArtifacts(artifacts: 'backend/target/sausage-store-0.0.1-SNAPSHOT.jar')
-                archiveArtifacts(artifacts: 'frontend/dist/frontend/*.jar')
+                archiveArtifacts(artifacts: 'frontend/target/frontend/*.jar')
             }
         }
         stage('Send POST') {
