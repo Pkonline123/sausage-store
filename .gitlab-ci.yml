@@ -1,0 +1,15 @@
+stages:
+ - build
+ - release
+
+build_a:
+ stage: build
+
+build_b:
+ stage: build
+
+release_a:  
+ stage: release
+
+release_b:  
+ stage: release
