@@ -27,7 +27,7 @@ build-frontend-code-job:
       - frontend/dist/frontend
 
 pachca-notification-backend:
-  stage: post
+  stage: .post
   only:
     changes:
     - backend/*
@@ -37,7 +37,7 @@ pachca-notification-backend:
     - build-backend-code-job
 
 pachca-notification-frontend:
-  stage: post
+  stage: .post
   only:
     changes:
     - frontend/*
