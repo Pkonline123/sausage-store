@@ -42,7 +42,7 @@ pachca-notification-frontend:
     changes:
     - frontend/*
   script:
-    - curl -X POST -H "Content-type: application/json" --data \'{"message":"Андрей Зачитайлов собрал frontend. https://gitlab.praktikum-services.ru/std-013-20/sausage-store.git"}\' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1
+    - curl -X POST -H "Content-type: application/json" --data \'{"message":"Андрей Зачитайлов собрал frontend."}\' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1
   needs:
     - build-frontend-code-job
 
