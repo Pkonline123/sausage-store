@@ -1,15 +1,49 @@
 stages:
- - build
- - release
+  - build
 
-build_a:
- stage: build
+build-backend-code-job:
+  stage: build  
+  only:
+    changes:
+    - backend/*
+  script:
+    - cd backend
+    - mvn package
+  artifacts:
+    paths:
+      - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
 
-build_b:
- stage: build
+build-frontend-code-job:
+  stage: build  
+  only:
+    changes:
+    - frontend/*
+  script:        
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/frontend
 
-release_a:  
- stage: release
+pachca-notification-backend:
+  stage: notify
+  only:
+    changes:
+    - backend/*
+  script:
+    - curl -X POST -H "Content-type: application/json" --data \'{"message":"Андрей Зачитайлов собрал backend."}\' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1
+  needs:
+    - build-backend-code-job
 
-release_b:  
- stage: release
+pachca-notification-frontend:
+  stage: notify
+  only:
+    changes:
+    - frontend/*
+  script:
+    - curl -X POST -H "Content-type: application/json" --data \'{"message":"Андрей Зачитайлов собрал frontend. https://gitlab.praktikum-services.ru/std-013-20/sausage-store.git"}\' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1
+  needs:
+    - build-frontend-code-job
+
+    
