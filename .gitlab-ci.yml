@@ -33,7 +33,7 @@ pachca-notification-backend:
     changes:
     - backend/*
   script:
-    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Андрей Зачитайлов собрал backend.\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
+    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Андрей Зачитайлов собрал backend. Артефакт https://gitlab.praktikum-services.ru/api/v4/projects/'$CI_PROJECT_ID'/jobs/artifacts/'$CI_COMMIT_BRANCH'/download?job=build-backend-code-job\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
   needs:
     - build-backend-code-job
 
@@ -43,7 +43,7 @@ pachca-notification-frontend:
     changes:
     - frontend/*
   script:
-    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Андрей Зачитайлов собрал backend.\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
+    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Андрей Зачитайлов собрал frontend. Артефакт https://gitlab.praktikum-services.ru/api/v4/projects/'$CI_PROJECT_ID'/jobs/artifacts/'$CI_COMMIT_BRANCH'/download?job=build-frontend-code-job\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
   needs:
     - build-frontend-code-job
 
