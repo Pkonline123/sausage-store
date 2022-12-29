@@ -1,0 +1,50 @@
+stages:
+  - build
+  - notify
+
+build-backend-code-job:
+  stage: build  
+  only:
+    changes:
+    - backend/*
+  script:
+    - cd backend
+    - mvn package
+  artifacts:
+    paths:
+      - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
+
+build-frontend-code-job:
+  stage: build  
+  only:
+    changes:
+    - frontend/*
+  script:        
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/frontend
+
+pachca-notification-backend:
+  stage: notify
+  only:
+    changes:
+    - backend/*
+  script:
+    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Андрей Зачитайлов собрал backend. Артефакт https://gitlab.praktikum-services.ru/api/v4/projects/'$CI_PROJECT_ID'/jobs/artifacts/'$CI_COMMIT_BRANCH'/download?job=build-backend-code-job\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
+  needs:
+    - build-backend-code-job
+
+pachca-notification-frontend:
+  stage: notify
+  only:
+    changes:
+    - frontend/*
+  script:
+    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Андрей Зачитайлов собрал frontend. Артефакт https://gitlab.praktikum-services.ru/api/v4/projects/'$CI_PROJECT_ID'/jobs/artifacts/'$CI_COMMIT_BRANCH'/download?job=build-frontend-code-job\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
+  needs:
+    - build-frontend-code-job
+
+    
