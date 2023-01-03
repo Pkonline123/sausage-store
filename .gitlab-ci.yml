@@ -37,7 +37,7 @@ build-frontend-code-job:
 
 spotbugs-sast:
   stage: test
-  only:
+  rules:
     changes:
     - backend/*
   variables:
