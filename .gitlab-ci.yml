@@ -6,19 +6,8 @@ stages:
   - notify
   - test
 
-sast:
-  stage: test
-
 include:
   - template: Security/SAST.gitlab-ci.yml
-
-spotbugs-sast:
-  variables:
-    COMPILE: "false"
-    SAST_JAVA_VERSION: 11
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository # не забудьте при сборке также указывать эту папку через аргумент -Dmaven.repo.local
-  needs:
-    - build-backend-code-job 
 
 build-backend-code-job:
   stage: build
@@ -45,6 +34,14 @@ build-frontend-code-job:
   artifacts:
     paths:
       - frontend/dist/frontend
+
+spotbugs-sast:
+  variables:
+    COMPILE: "false"
+    SAST_JAVA_VERSION: 11
+    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository # не забудьте при сборке также указывать эту папку через аргумент -Dmaven.repo.local
+  needs:
+    - build-backend-code-job       
 
 pachca-notification-backend:
   stage: notify
