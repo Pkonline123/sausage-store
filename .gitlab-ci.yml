@@ -1,6 +1,6 @@
 variables:
   SECURE_LOG_LEVEL: "debug"
-  MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
+  MAVEN_OPTS: -Dmaven.repo.local=./repository
 
 stages:
   - build
