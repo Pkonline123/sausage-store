@@ -88,8 +88,8 @@ sonarqube-test-front:
     - cd frontend
     - >
       sonar-scanner
-          -Dsonar.projectKey=${PROJECT_KEY_FRONT}
-          -Dsonar.sources=.
-          -Dsonar.host.url=${SONARQUBE_URL}
-          -Dsonar.login=${LOGIN_FRONT}
-          -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
+      -Dsonar.projectKey=${PROJECT_KEY_FRONT}
+      -Dsonar.sources=.
+      -Dsonar.host.url=${SONARQUBE_URL}
+      -Dsonar.login=${LOGIN_FRONT}
+      -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
