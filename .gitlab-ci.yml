@@ -1,3 +1,6 @@
+variables:
+  SECURE_LOG_LEVEL: "debug"
+
 stages:
   - build
   - test
@@ -17,7 +20,7 @@ build-backend-code-job:
   artifacts:
     paths:
       - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
-      - Dmaven.repo.local/${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST 
+      - ${CI_PROJECT_DIR}/.m2/repository # сохранение зависимостей для SAST 
 
 build-frontend-code-job:
   stage: build  
