@@ -37,7 +37,7 @@ build-frontend-code-job:
 
 spotbugs-sast:
   stage: test
-  rules:
+  only:
     changes:
     - backend/*
   variables:
@@ -45,7 +45,7 @@ spotbugs-sast:
     SAST_JAVA_VERSION: 11
     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository # не забудьте при сборке также указывать эту папку через аргумент -Dmaven.repo.local
   needs:
-    - build-backend-code-job       
+    - build-backend-code-job      
 
 pachca-notification-backend:
   stage: notify
