@@ -1,5 +1,6 @@
 variables:
   SECURE_LOG_LEVEL: "debug"
+  MAVEN_OPTS: -Dmaven.repo.local=/.m2/repository
 
 stages:
   - build
@@ -11,8 +12,6 @@ include:
 
 build-backend-code-job:
   stage: build
-  variables:
-    MAVEN_OPTS: -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository
   only:
     changes:
     - backend/*
