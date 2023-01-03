@@ -69,10 +69,11 @@ sonarqube-test-back:
   image: maven:3.8-openjdk-16
   script:
     - cd backend
-    - mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
-      -Dsonar.projectKey=13__
-      -Dsonar.host.url=https://sonarqube.praktikum-services.ru
-      -Dsonar.login=4c0a7421f31064ef01b530aad19b358452f1fe52
+    - >
+      mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
+        -Dsonar.projectKey=${PROJECT_KEY_BACK}
+        -Dsonar.host.url=${SONARQUBE_URL}
+        -Dsonar.login=${LOGIN_BACK}
 
 
 sonarqube-test-front:
@@ -80,8 +81,9 @@ sonarqube-test-front:
   image: sonarsource/sonar-scanner-cli:latest
   script:
     - cd frontend
-    - sonar-scanner
-        -Dsonar.projectKey=13_
-        -Dsonar.sources=.
-        -Dsonar.host.url=https://sonarqube.praktikum-services.ru
-        -Dsonar.login=4d2d3a99c89987f714d3501af9c6b45fb9d2426d
+    - >
+      sonar-scanner
+          -Dsonar.projectKey=${PROJECT_KEY_FRONT}
+          -Dsonar.sources=.
+          -Dsonar.host.url=${SONARQUBE_URL}
+          -Dsonar.login=${LOGIN_FRONT}
