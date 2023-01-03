@@ -75,7 +75,7 @@ sonarqube-test-back:
     - cd backend
     - mvn verify sonar:sonar -Dsonar.qualitygate.wait=true \
         -Dsonar.projectKey=13_ZACHITAYLOVANDREY_BACK \
-        -Dsonar.host.url=http://${SONARQUBE_URL} \
+        -Dsonar.host.url=https://${SONARQUBE_URL} \
         -Dsonar.login=c2048a5405875fe640dc39495d5251a563277fb7 \
         -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД
 
