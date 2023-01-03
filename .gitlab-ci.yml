@@ -66,11 +66,12 @@ pachca-notification-frontend:
 
 sonarqube-test-back:
   stage: test
-  image: maven:3.8-openjdk-16
+  image: maven:3.9-openjdk-16
   script:
     - cd backend
     - >
       mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
+        -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД 
         -Dsonar.projectKey=${PROJECT_KEY_BACK}
         -Dsonar.host.url=${SONARQUBE_URL}
         -Dsonar.login=${LOGIN_BACK}
@@ -83,6 +84,7 @@ sonarqube-test-front:
     - cd frontend
     - >
       sonar-scanner
+          -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
           -Dsonar.projectKey=${PROJECT_KEY_FRONT}
           -Dsonar.sources=.
           -Dsonar.host.url=${SONARQUBE_URL}
