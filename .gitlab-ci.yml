@@ -10,14 +10,14 @@ include:
   - template: Security/SAST.gitlab-ci.yml
 
 build-backend-code-job:
-  image: maven:3.8.6-jdk-8-slim
   stage: build
   only:
     changes:
     - backend/*
   script:
     - cd backend
-    - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository
+    - mvn package -Dmaven.repo.local=./.m2/repository
+    - mvn package
   artifacts:
     paths:
       - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
