@@ -64,4 +64,24 @@ pachca-notification-frontend:
   needs:
     - build-frontend-code-job
 
-    
+sonarqube-test-back:
+  stage: test
+  image: maven:3.8-openjdk-16
+  script:
+    - cd backend
+    - mvn verify sonar:sonar -Dsonar.qualitygate.wait=true \
+      -Dsonar.projectKey=13__ \
+      -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
+      -Dsonar.login=4c0a7421f31064ef01b530aad19b358452f1fe52
+
+
+sonarqube-test-front:
+  stage: test
+  image: sonarsource/sonar-scanner-cli:latest
+  script:
+    - cd frontend
+    - sonar-scanner \
+        -Dsonar.projectKey=13_ \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
+        -Dsonar.login=4d2d3a99c89987f714d3501af9c6b45fb9d2426d
