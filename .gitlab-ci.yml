@@ -17,7 +17,7 @@ build-backend-code-job:
   artifacts:
     paths:
       - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
-      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST 
+      - Dmaven.repo.local/${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST 
 
 build-frontend-code-job:
   stage: build  
@@ -31,7 +31,6 @@ build-frontend-code-job:
   artifacts:
     paths:
       - frontend/dist/frontend
-      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST 
 
 spotbugs-sast:
   variables:
