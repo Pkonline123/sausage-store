@@ -37,9 +37,9 @@ build-frontend-code-job:
 
 spotbugs-sast:
   stage: test
-  only:
-    changes:
-    - backend/*
+  rules:
+    - changes:
+      - backend/*
   variables:
     COMPILE: "false"
     SAST_JAVA_VERSION: 11
