@@ -1,6 +1,5 @@
 variables:
   SECURE_LOG_LEVEL: "debug"
-  MAVEN_OPTS: -Dmaven.repo.local=repository
 
 stages:
   - build
@@ -17,7 +16,7 @@ build-backend-code-job:
     - backend/*
   script:
     - cd backend
-    - mvn package
+    - mvn package -Dmaven.repo.local=./.m2/repository
   artifacts:
     paths:
       - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
@@ -39,7 +38,7 @@ build-frontend-code-job:
 spotbugs-sast:
   variables:
     COMPILE: "false"
-    SAST_JAVA_VERSION: 11
+    SAST_JAVA_VERSION: 17
     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository # не забудьте при сборке также указывать эту папку через аргумент -Dmaven.repo.local 
 
 pachca-notification-backend:
