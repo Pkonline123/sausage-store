@@ -39,7 +39,7 @@ spotbugs-sast:
   stage: test
   rules:
     changes:
-      - backend/*
+    - backend/*
   variables:
     COMPILE: "false"
     SAST_JAVA_VERSION: 11
