@@ -1,6 +1,6 @@
 variables:
   SECURE_LOG_LEVEL: "debug"
-  MAVEN_OPTS: -Dmaven.repo.local=./.m2/repository
+  MAVEN_OPTS: -Dmaven.repo.local=/.m2/repository
 
 stages:
   - build
@@ -20,8 +20,8 @@ build-backend-code-job:
     - mvn package
   artifacts:
     paths:
-      - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
-      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST 
+      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
+      - backend/target/sausage-store-0.0.1-SNAPSHOT.jar 
 
 build-frontend-code-job:
   stage: build  
