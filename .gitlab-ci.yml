@@ -38,8 +38,9 @@ build-frontend-code-job:
 spotbugs-sast:
   stage: test
   rules:
-    changes:
-    - backend/*
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - backend/*
   variables:
     COMPILE: "false"
     SAST_JAVA_VERSION: 11
