@@ -70,7 +70,7 @@ pachca-notification-frontend:
 
 sonarqube-test-back:
   stage: test
-  image: maven:3.8-openjdk-18
+  image: maven:3.8-openjdk-16
   script:
     - cd backend
     - >
