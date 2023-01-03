@@ -12,7 +12,7 @@ include:
 build-backend-code-job:
   stage: build
   variables:
-    - Dmaven.repo.local
+    - CI_PROJECT_DIR = Dmaven.repo.local
   only:
     changes:
     - backend/*
