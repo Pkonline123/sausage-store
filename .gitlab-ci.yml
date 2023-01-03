@@ -17,7 +17,6 @@ build-backend-code-job:
   script:
     - cd backend
     - mvn package -Dmaven.repo.local=./.m2/repository
-    - mvn package
   artifacts:
     paths:
       - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
@@ -38,7 +37,7 @@ build-frontend-code-job:
 
 spotbugs-sast:
   variables:
-    COMPILE: "false"
+    COMPILE: "true"
     SAST_JAVA_VERSION: 17
     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository # не забудьте при сборке также указывать эту папку через аргумент -Dmaven.repo.local 
 
