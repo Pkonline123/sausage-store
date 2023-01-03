@@ -76,9 +76,9 @@ sonarqube-test-back:
     - >
       mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
         -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД 
-        -Dsonar.projectKey=${PROJECT_KEY_BACK}
-        -Dsonar.host.url=${SONARQUBE_URL}
-        -Dsonar.login=${LOGIN_BACK}
+        -Dsonar.projectKey=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЕНД
+        -Dsonar.host.url=https://sonarqube.praktikum-services.ru
+        -Dsonar.login=4c0a7421f31064ef01b530aad19b358452f1fe52
 
 
 sonarqube-test-front:
