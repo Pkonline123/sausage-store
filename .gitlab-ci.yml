@@ -75,21 +75,21 @@ sonarqube-test-back:
     - cd backend
     - >
       mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
-        -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД 
         -Dsonar.projectKey=${PROJECT_KEY_BACK}
         -Dsonar.host.url=${SONARQUBE_URL}
         -Dsonar.login=${LOGIN_BACK}
+        -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД 
 
 
 sonarqube-test-front:
   stage: test
-  image: sonarsource/sonar-scanner-cli:latest
+  image: sonarsource/sonar-scanner-cli
   script:
     - cd frontend
     - >
       sonar-scanner
-          -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
           -Dsonar.projectKey=${PROJECT_KEY_FRONT}
           -Dsonar.sources=.
           -Dsonar.host.url=${SONARQUBE_URL}
           -Dsonar.login=${LOGIN_FRONT}
+          -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
