@@ -1,3 +1,6 @@
+variables:
+  SECURE_LOG_LEVEL: "debug"
+
 stages:
   - build
   - notify
@@ -7,16 +10,17 @@ include:
   - template: Security/SAST.gitlab-ci.yml
 
 build-backend-code-job:
-  stage: build  
+  stage: build
   only:
     changes:
     - backend/*
   script:
     - cd backend
-    - mvn package
+    - mvn package "-Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository clean install"
   artifacts:
     paths:
-      - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
+      - backend/target/sausage-store-0.0.1-SNAPSHOT.jar 
+      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
 
 build-frontend-code-job:
   stage: build  
@@ -30,6 +34,19 @@ build-frontend-code-job:
   artifacts:
     paths:
       - frontend/dist/frontend
+
+spotbugs-sast:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - backend/*
+  variables:
+    COMPILE: "false"
+    SAST_JAVA_VERSION: 11
+    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository # не забудьте при сборке также указывать эту папку через аргумент -Dmaven.repo.local
+  needs:
+    - build-backend-code-job      
 
 pachca-notification-backend:
   stage: notify
@@ -51,4 +68,28 @@ pachca-notification-frontend:
   needs:
     - build-frontend-code-job
 
-    
+sonarqube-test-back:
+  stage: test
+  image: maven:3.8-openjdk-16
+  script:
+    - cd backend
+    - >
+      mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
+      -Dsonar.projectKey=${PROJECT_KEY_BACK}
+      -Dsonar.host.url=${SONARQUBE_URL}
+      -Dsonar.login=${LOGIN_BACK}
+      -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД
+
+
+sonarqube-test-front:
+  stage: test
+  image: sonarsource/sonar-scanner-cli
+  script:
+    - cd frontend
+    - >
+      sonar-scanner
+      -Dsonar.projectKey=${PROJECT_KEY_FRONT}
+      -Dsonar.sources=.
+      -Dsonar.host.url=${SONARQUBE_URL}
+      -Dsonar.login=${LOGIN_FRONT}
+      -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
