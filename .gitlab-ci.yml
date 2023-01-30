@@ -106,8 +106,8 @@ sonarqube-test-back:
       -Dsonar.login=${LOGIN_BACK}
       -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД
   cache:
-  paths:
-    - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
+    paths:
+      - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
 
 
 sonarqube-test-front:
@@ -123,5 +123,5 @@ sonarqube-test-front:
       -Dsonar.login=${LOGIN_FRONT}
       -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
   cache:
-  paths:
-    - .npm/ # для хранения зависимостей сборки фронтенда
+    paths:
+      - .npm/ # для хранения зависимостей сборки фронтенда
