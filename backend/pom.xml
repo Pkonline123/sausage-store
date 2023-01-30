@@ -116,11 +116,12 @@
             </plugin>
         </plugins>
     </build>
+    
     <distributionManagement>
         <repository>
             <id>sausage-store</id>
             <name>sausage-store</name>
-            <url>${env.NEXUS_REPO_URL}/sausage-store/</url>
+            <url>${env.NEXUS_REPO_URL}/sausage-store-zachitaylov-andrey-backend/</url>
         </repository>
     </distributionManagement>
 
