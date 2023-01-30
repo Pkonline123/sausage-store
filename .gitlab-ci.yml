@@ -79,7 +79,7 @@ pachca-notification-backend:
     changes:
     - backend/*
   script:
-    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Вышла новая версия backend сосисочной — '${VERSION}'. Скачать backend можно по ссылке {NEXUS_REPO_URL}/sausage-store-zachitaylov-andrey-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
+    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Вышла новая версия backend сосисочной — '${VERSION}'. Скачать backend можно по ссылке {NEXUS_REPO_URL}/sausage-store-zachitaylov-andrey-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
   needs:
     - build-backend-code-job
 
@@ -89,7 +89,7 @@ pachca-notification-frontend:
     changes:
     - frontend/*
   script:
-    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Вышла новая версия frontend сосисочной — '${VERSION}'. Скачать frontend можно по ссылке ${NEXUS_REPO_URL}/sausage-store-zachitaylov-andrey-frontend/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.tar.gz"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
+    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Вышла новая версия frontend сосисочной — '${VERSION}'. Скачать frontend можно по ссылке ${NEXUS_REPO_URL}/sausage-store-zachitaylov-andrey-frontend/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.tar.gz\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
   needs:
     - build-frontend-code-job
 
