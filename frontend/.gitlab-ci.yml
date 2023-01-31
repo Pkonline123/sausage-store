@@ -24,7 +24,7 @@ release:
    stage: release
    script:
      - cd frontend/dist
-     - tar czvf sausage-store-${VERSION}.tar.gz sausage-store-${VERSION}
+     - tar czvf sausage-store-${VERSION}.tar.gz frontend
      - >
        curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL}/sausage-store-front/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz
    only:
