@@ -8,6 +8,7 @@ variables:
 stages:
    - build
    - release
+   - deploy
 
 build:
    stage: build
