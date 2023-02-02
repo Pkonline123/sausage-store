@@ -9,10 +9,11 @@ variables:
 
 stages:
    - build
+   - test
    - release
    - deploy
 
-build:
+build-backend:
    stage: build
    script:
       - cd backend
@@ -21,7 +22,20 @@ build:
       - changes:
            - backend/*
 
-release:
+spotbugs-sast:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - backend/*
+  variables:
+    COMPILE: "false"
+    SAST_JAVA_VERSION: 11
+    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository # не забудьте при сборке также указывать эту папку через аргумент -Dmaven.repo.local
+  needs:
+    - build-backend-code-job
+
+release-backend:
    stage: release
    script:
       - cd backend
@@ -29,6 +43,31 @@ release:
    rules:
       - changes:
            - backend/*
+
+sonarqube-test-back:
+  stage: test
+  image: maven:3.8-openjdk-16
+  script:
+    - cd backend
+    - >
+      mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
+      -Dsonar.projectKey=${PROJECT_KEY_BACK}
+      -Dsonar.host.url=${SONARQUBE_URL}
+      -Dsonar.login=${LOGIN_BACK}
+      -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД
+  cache:
+    paths:
+      - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
+
+pachca-notification-backend:
+  stage: notify
+  only:
+    changes:
+    - backend/*
+  script:
+    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Вышла новая версия backend сосисочной — '${VERSION}'. Скачать backend можно по ссылке '${NEXUS_REPO_URL}'/sausage-store-zachitaylov-andrey-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
+  needs:
+    - build-backend-code-job
 
 before_script:
   #устанавливаем ssh-agent для удобства аутентификации по ssh
@@ -41,7 +80,7 @@ before_script:
   - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
 
-deploy:
+deploy-backend:
   stage: deploy
   script:
     - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
