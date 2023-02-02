@@ -39,16 +39,6 @@ release-frontend:
      changes:
      - frontend/*
 
-pachca-notification-frontend:
-  stage: notify
-  only:
-    changes:
-    - frontend/*
-  script:
-    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Вышла новая версия frontend сосисочной — '${VERSION}'. Скачать frontend можно по ссылке '${NEXUS_REPO_URL}'/sausage-store-zachitaylov-andrey-frontend/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.tar.gz\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
-  needs:
-    - release-frontend
-
 sonarqube-test-front:
   stage: test
   image: sonarsource/sonar-scanner-cli
@@ -64,6 +54,16 @@ sonarqube-test-front:
   cache:
     paths:
       - .npm/ # для хранения зависимостей сборки фронтенда
+
+pachca-notification-frontend:
+  stage: notify
+  only:
+    changes:
+    - frontend/*
+  script:
+    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Вышла новая версия frontend сосисочной — '${VERSION}'. Скачать frontend можно по ссылке '${NEXUS_REPO_URL}'/sausage-store-zachitaylov-andrey-frontend/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.tar.gz\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
+  needs:
+    - release-frontend
 
 before_script:
   #устанавливаем ssh-agent для удобства аутентификации по ssh
