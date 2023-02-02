@@ -22,9 +22,9 @@ build-backend:
    rules: # rules и only в данных случаях взаимозаменяемы
       - changes:
         - backend/*
-    artifacts:
-    paths:
-      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
+   artifacts:
+   paths:
+    - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
 
 spotbugs-sast:
   stage: test
