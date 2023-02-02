@@ -52,7 +52,8 @@ sonarqube-test-front:
       -Dsonar.login=${LOGIN_FRONT}
       -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
   cache:
-    paths: []
+    paths:
+      - .npm/ # для хранения зависимостей сборки фронтенда
 
 pachca-notification-frontend:
   stage: notify
