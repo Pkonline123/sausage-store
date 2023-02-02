@@ -43,7 +43,7 @@ sonarqube-test-front:
   stage: test
   image: sonarsource/sonar-scanner-cli
   script:
-    # - cd frontend
+    - cd frontend
     - >
       sonar-scanner
       -Dsonar.projectKey=${PROJECT_KEY_FRONT}
