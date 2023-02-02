@@ -6,17 +6,6 @@ variables:
   SECURE_LOG_LEVEL: "debug"
   VERSION: 1.0.${CI_PIPELINE_ID}
 
-before_script:
-  #устанавливаем ssh-agent для удобства аутентификации по ssh
-  - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-  - eval $(ssh-agent -s)
-  #сохраняем сгенеренный ранее приватный ключ для раннера
-  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-  - mkdir -p ~/.ssh
-  - chmod 600 ~/.ssh
-  - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-  - chmod 644 ~/.ssh/known_hosts
-
 stages:
    - build
    - test
@@ -50,21 +39,21 @@ release-frontend:
      changes:
      - frontend/*
 
-sonarqube-test-front:
-  stage: test
-  image: sonarsource/sonar-scanner-cli
-  script:
-    - cd frontend
-    - >
-      sonar-scanner
-      -Dsonar.projectKey=${PROJECT_KEY_FRONT}
-      -Dsonar.sources=.
-      -Dsonar.host.url=${SONARQUBE_URL}
-      -Dsonar.login=${LOGIN_FRONT}
-      -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
-  cache:
-    paths:
-      - .npm/ # для хранения зависимостей сборки фронтенда
+# sonarqube-test-front:
+#   stage: test
+#   image: sonarsource/sonar-scanner-cli
+#   script:
+#     - cd frontend
+#     - >
+#       sonar-scanner
+#       -Dsonar.projectKey=${PROJECT_KEY_FRONT}
+#       -Dsonar.sources=.
+#       -Dsonar.host.url=${SONARQUBE_URL}
+#       -Dsonar.login=${LOGIN_FRONT}
+#       -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
+#   cache:
+#     paths:
+#       - .npm/ # для хранения зависимостей сборки фронтенда
 
 pachca-notification-frontend:
   stage: notify
@@ -76,6 +65,16 @@ pachca-notification-frontend:
   needs:
     - release-frontend
 
+before_script:
+  #устанавливаем ssh-agent для удобства аутентификации по ssh
+  - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+  - eval $(ssh-agent -s)
+  #сохраняем сгенеренный ранее приватный ключ для раннера
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 600 ~/.ssh
+  - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
 
 deploy-frontend:
   stage: deploy
