@@ -21,7 +21,10 @@ build-backend:
       - mvn package -Dversion.application=${VERSION} -Dmaven.repo.local=${MAVEN_REPO_PATH}
    rules: # rules и only в данных случаях взаимозаменяемы
       - changes:
-           - backend/*
+        - backend/*
+    artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
 
 spotbugs-sast:
   stage: test
