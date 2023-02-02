@@ -14,6 +14,9 @@ stages:
    - notify
    - deploy
 
+include:
+  - template: Security/SAST.gitlab-ci.ym
+
 build-backend:
    stage: build
    script:
