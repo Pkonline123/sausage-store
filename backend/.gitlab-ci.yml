@@ -15,7 +15,7 @@ stages:
    - deploy
 
 include:
-  - template: Security/SAST.gitlab-ci.ym
+  - template: Security/SAST.gitlab-ci.yml
 
 build-backend:
    stage: build
