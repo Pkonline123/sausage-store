@@ -27,6 +27,7 @@ build-backend:
         - backend/*
    artifacts:
     paths:
+      - backend/target/sausage-store-${VERSION}.jar
       - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
 
 spotbugs-sast:

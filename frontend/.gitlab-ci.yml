@@ -21,6 +21,9 @@ build-frontend:
    only:
      changes:
      - frontend/*
+   artifacts:
+    paths:
+     - frontend/dist/frontend
 
 release-frontend:
    stage: release
