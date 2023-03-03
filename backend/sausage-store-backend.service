@@ -13,9 +13,7 @@ ExecStart=/usr/bin/java \
 -Dmyserver.bindAddr='127.0.0.1' \
 -Dmyserver.bindPort='8080' \
 -Dmyserver.hostName='Sausage-store' \
--Djavax.net.ssl.trustStore=/home/student/YATrustStore \
--Djavax.net.ssl.trustStorePassword={$TRUSTSTOPAS} \
--jar '/home/jarservice/sausage-store.jar' \
+-jar '/home/jarservice/sausage-store.jar -Djavax.net.ssl.trustStore=/home/student/YATrustStore -Djavax.net.ssl.trustStorePassword=superpass'  \
 --spring.datasource.url=jdbc:postgresql://${PSQL_HOST}:${PSQL_PORT}/${PSQL_DBNAME} \
 --spring.datasource.username=${PSQL_USER} \
 --spring.datasource.password=${PSQL_PASSWORD} \
