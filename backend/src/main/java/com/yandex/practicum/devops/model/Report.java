@@ -1,7 +1,8 @@
 package com.yandex.practicum.devops.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.data.annotation.Id;
+//import org.springframework.data.annotation.Id;
+import javax.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
