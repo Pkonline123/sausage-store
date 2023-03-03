@@ -2,6 +2,7 @@
 Description=Sausage-store
 
 [Service]
+EnvironmentFile=/etc/systemd/system/var-file-backend-sausage
 User=jarservice
 Environment=REPORT_PATH=/logs/reports
 Environment=LOG_PATH=/logs
