@@ -2,6 +2,7 @@
 Description=Sausage-store
 
 [Service]
+EnvironmentFile=/etc/systemd/system/var-file-backend-sausage
 User=jarservice
 Environment=REPORT_PATH=/logs/reports
 Environment=LOG_PATH=/logs
@@ -15,7 +16,8 @@ ExecStart=/usr/bin/java \
 -jar '/home/jarservice/sausage-store.jar' \
 --spring.datasource.url=jdbc:postgresql://${PSQL_HOST}:${PSQL_PORT}/${PSQL_DBNAME} \
 --spring.datasource.username=${PSQL_USER} \
---spring.datasource.password=${PSQL_PASSWORD}
+--spring.datasource.password=${PSQL_PASSWORD} \
+--spring.data.mongodb.uri=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27018/${MONGO_DATABASE}?tls=true -Djavax.net.ssl.trustStore=/home/student/YATrustStore1 -Djavax.net.ssl.trustStorePassword=superpass
 SuccessExitStatus=143
 
 [Install]
