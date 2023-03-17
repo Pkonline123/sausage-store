@@ -5,5 +5,5 @@ COPY . .
 RUN npm install \
     && npm install -g http-server \
     && npm run build
-EXPOSE 80
-ENTRYPOINT ["http-server", "dist/frontend/", "-p", "80", "--proxy", "http://sausage-store:8080"]
+EXPOSE 8080
+ENTRYPOINT ["http-server", "dist/frontend/", "-p", "8080", "--proxy", "http://sausage-store:80"]
