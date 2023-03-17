@@ -19,7 +19,7 @@ stages:
   - release
   - deploy
 
-build-backend:
+build-frontend:
   stage: build
   image: docker:20.10.12-dind-rootless
   before_script:
@@ -35,7 +35,7 @@ build-backend:
       .
     - docker push $CI_REGISTRY_IMAGE/sausage-frontend:$CI_COMMIT_SHA
 
-upload-backend-latest:
+upload-frontend-latest:
   variables:
     GIT_STRATEGY: none
   image: docker:20.10.12-dind-rootless
@@ -49,7 +49,7 @@ upload-backend-latest:
     - docker tag $CI_REGISTRY_IMAGE/sausage-frontend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-frontend:latest
     - docker push $CI_REGISTRY_IMAGE/sausage-frontend:latest
 
-deploy-backend:
+deploy-frontend:
   stage: deploy
   image: alpine:3.15.0
   # если хотим сделать деплой по кнопке
