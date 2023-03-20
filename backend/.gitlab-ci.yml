@@ -63,8 +63,6 @@ sonarqube-test-back:
   cache:
     paths:
       - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
-  needs:
-    - build-backend
 
 upload-backend-latest:
   variables:
