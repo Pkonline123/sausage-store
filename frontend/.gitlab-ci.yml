@@ -13,9 +13,11 @@ variables:
 include:
   - project: 'templates/ci'
     file: 'DockerInDockerTemplate.yml'
+  - template: Security/SAST.gitlab-ci.yml
     
 stages:
   - build
+  - test
   - release
   - deploy
 
@@ -35,6 +37,22 @@ build-frontend:
       .
     - docker push $CI_REGISTRY_IMAGE/sausage-frontend:$CI_COMMIT_SHA
 
+sonarqube-test-front:
+  stage: test
+  image: sonarsource/sonar-scanner-cli
+  script:
+    - cd frontend
+    - >
+      sonar-scanner
+      -Dsonar.projectKey=${PROJECT_KEY_FRONT}
+      -Dsonar.sources=.
+      -Dsonar.host.url=${SONARQUBE_URL}
+      -Dsonar.login=${LOGIN_FRONT}
+      -Dsonar.projectName=13_ЗАЧИТАЙЛОВАНДРЕЙ_ФРОНТЕНД
+  cache:
+    paths:
+      - .npm/ # для хранения зависимостей сборки фронтенда
+
 upload-frontend-latest:
   variables:
     GIT_STRATEGY: none
@@ -48,6 +66,8 @@ upload-frontend-latest:
     # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
     - docker tag $CI_REGISTRY_IMAGE/sausage-frontend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-frontend:latest
     - docker push $CI_REGISTRY_IMAGE/sausage-frontend:latest
+  needs:
+   - sonarqube-test-front
 
 deploy-frontend:
   stage: deploy
