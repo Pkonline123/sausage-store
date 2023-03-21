@@ -9,7 +9,7 @@ RUN npm install \
 #release
 FROM node:16-alpine
 WORKDIR /app
-COPY --from=build /usr/src/app/dist .
+COPY --from=build /usr/src/app .
 RUN npm install -g http-server
 EXPOSE 80
 ENTRYPOINT ["http-server", "dist/frontend/", "-p", "80", "--proxy", "http://backend:8080"]
