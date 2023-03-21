@@ -13,7 +13,7 @@ docker pull gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-f
 docker stop frontend || true
 docker rm frontend || true
 set -e
-docker run -d -p 80:80 --name frontend \
+docker run --rm -d -p 80:80 --name frontend \
     --network=sausage_network \
     --restart always \
     --pull always \
