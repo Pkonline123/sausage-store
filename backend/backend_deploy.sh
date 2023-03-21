@@ -1,10 +1,10 @@
 #!/bin/bash
 set +e
 cat > .env <<EOF
-SPRING_DATASOURCE_URL=jdbc:postgresql://rc1b-txenjeot0qbcbnh3.mdb.yandexcloud.net:6432/std-013-20
-SPRING_DATASOURCE_USERNAME=std-013-20
-SPRING_DATASOURCE_PASSWORD=P@ssw0rd
-SPRING_DATA_MONGODB_URI=mongodb://std-013-20:P%40ssw0rd@rc1a-xb6q7pmw36t77ryz.mdb.yandexcloud.net:27018/std-013-20?tls=true
+SPRING_DATASOURCE_URL=${PSQL_DATASOURCE}
+SPRING_DATASOURCE_USERNAME=${DATASOURCE_USERNAME}
+SPRING_DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD}
+SPRING_DATA_MONGODB_URI=${DATA_MONGODB}
 REPORT_PATH=./logs
 EOF
 docker network create -d bridge sausage_network || true
