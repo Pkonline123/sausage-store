@@ -14,55 +14,55 @@ include:
     file: 'DockerInDockerTemplate.yml'
     
 stages:
-  # - build
-  # - test
-  # - release
+  - build
+  - test
+  - release
   - deploy
 
-# build-backend:
-#   stage: build
-#   image: docker:20.10.12-dind-rootless
-#   before_script:
-#     - until docker info; do sleep 1; done
-#     # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
-#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#   script:
-#     - cd backend
-#     - >
-#       docker build
-#       --build-arg VERSION=$VERSION
-#       --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
-#       .
-#     - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+build-backend:
+  stage: build
+  image: docker:20.10.12-dind-rootless
+  before_script:
+    - until docker info; do sleep 1; done
+    # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - cd backend
+    - >
+      docker build
+      --build-arg VERSION=$VERSION
+      --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
 
-# sonarqube-test-back:
-#   stage: test
-#   image: maven:3.8-openjdk-16
-#   script:
-#     - cd backend
-#     - >
-#       mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
-#       -Dsonar.projectKey=${PROJECT_KEY_BACK}
-#       -Dsonar.host.url=${SONARQUBE_URL}
-#       -Dsonar.login=${LOGIN_BACK}
-#       -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД
-#   cache:
-#     paths:
-#       - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
+sonarqube-test-back:
+  stage: test
+  image: maven:3.8-openjdk-16
+  script:
+    - cd backend
+    - >
+      mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
+      -Dsonar.projectKey=${PROJECT_KEY_BACK}
+      -Dsonar.host.url=${SONARQUBE_URL}
+      -Dsonar.login=${LOGIN_BACK}
+      -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД
+  cache:
+    paths:
+      - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
 
-# upload-backend-latest:
-#   variables:
-#     GIT_STRATEGY: none
-#   image: docker:20.10.12-dind-rootless
-#   stage: release
-#   before_script:
-#     - until docker info; do sleep 1; done
-#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#   script:
-#     - docker pull $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
-#     # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
-#     - docker tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend:latest
-#     - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
+upload-backend-latest:
+  variables:
+    GIT_STRATEGY: none
+  image: docker:20.10.12-dind-rootless
+  stage: release
+  before_script:
+    - until docker info; do sleep 1; done
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
+    - docker tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
 
 deploy-backend:
   stage: deploy
@@ -85,10 +85,6 @@ deploy-backend:
     - scp ${env_file} ${DEV_USER}@${DEV_HOST}:/home/deployservice
     - ssh ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
-       export "SPRING_DATASOURCE_URL=${PSQL_DATASOURCE}";
-       export "SPRING_DATASOURCE_USERNAME=${DATASOURCE_USERNAME}";
-       export "SPRING_DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD}";
-       export "SPRING_DATA_MONGODB_URI=${DATA_MONGODB}";
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
        export "CI_REGISTRY=${CI_REGISTRY}";
