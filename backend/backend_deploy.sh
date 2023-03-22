@@ -17,5 +17,5 @@ docker run -v /home/student/logsBackDocker:/app/logs -d --name backend \
     --network=sausage_network \
     --restart always \
     --pull always \
-    --env-file ./home/deployservice/env_file \
+    --env-file ./env_file \
     gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-backend:latest
