@@ -1,56 +1,39 @@
-cache:
-  paths:
-    - ${CI_PROJECT_DIR}/.m2/repository
+# В нашем Gitlab для сборки контейнеров воспользуемся Докером в Докере :)  
+# https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-the-kubernetes-executor-with-docker-in-docker
+# Для сборки образов с использованием Docker-in-Docker:
+# добавить в код Downstream пайплайнов в секцию include подготовленный шаблон, содержащий необходимые настройки:
+#  https://gitlab.praktikum-services.ru/templates/ci/-/blob/main/DockerInDockerTemplate.yml
+# использовать в задачах сборки в качестве образа стабильную версию образа Docker:dind docker:20.10.12-dind-rootless
+#
 
 variables:
-   VERSION: 1.0.${CI_PIPELINE_ID}
-   MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
-   JAVA_OPTS: -XX:MaxRAMPercentage=90 # для того, чтобы Maven не съел всю свободную оперативку
-
-stages:
-   - build
-   - test
-   - release
-   - notify
-   - deploy
+    VERSION: 1.0.${CI_PIPELINE_ID}
 
 include:
-  - template: Security/SAST.gitlab-ci.yml
+  - project: 'templates/ci'
+    file: 'DockerInDockerTemplate.yml'
+    
+stages:
+  - build
+  - test
+  - release
+  - deploy
 
 build-backend:
-   stage: build
-   script:
-      - cd backend
-      - mvn package -Dversion.application=${VERSION} -Dmaven.repo.local=${MAVEN_REPO_PATH}
-   rules: # rules и only в данных случаях взаимозаменяемы
-      - changes:
-        - backend/*
-   artifacts:
-    paths:
-      - backend/target/sausage-store-${VERSION}.jar
-      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
-
-spotbugs-sast:
-  stage: test
-  rules:
-    - if: $CI_COMMIT_BRANCH
-      changes:
-        - backend/*
-  variables:
-    COMPILE: "false"
-    SAST_JAVA_VERSION: 11
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository # не забудьте при сборке также указывать эту папку через аргумент -Dmaven.repo.local
-  needs:
-    - build-backend
-
-release-backend:
-   stage: release
-   script:
-      - cd backend
-      - mvn deploy -DskipTests -Dversion.application=${VERSION} -Dmaven.repo.local=${MAVEN_REPO_PATH} -s settings.xml
-   rules:
-      - changes:
-           - backend/*
+  stage: build
+  image: docker:20.10.12-dind-rootless
+  before_script:
+    - until docker info; do sleep 1; done
+    # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - cd backend
+    - >
+      docker build
+      --build-arg VERSION=$VERSION
+      --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
 
 sonarqube-test-back:
   stage: test
@@ -67,31 +50,42 @@ sonarqube-test-back:
     paths:
       - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
 
-pachca-notification-backend:
-  stage: notify
-  only:
-    changes:
-    - backend/*
+upload-backend-latest:
+  variables:
+    GIT_STRATEGY: none
+  image: docker:20.10.12-dind-rootless
+  stage: release
+  before_script:
+    - until docker info; do sleep 1; done
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - "curl -X POST -H 'Content-type: application/json' --data '{\"message\":\"Вышла новая версия backend сосисочной — '${VERSION}'. Скачать backend можно по ссылке '${NEXUS_REPO_URL}'/sausage-store-zachitaylov-andrey-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar\"}' https://api.pachca.com/webhooks/01GHKAEEBHC027DJAH7CHPTVF1"
-  needs:
-    - release-backend
+    - docker pull $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
+    - docker tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
 
 deploy-backend:
   stage: deploy
+  image: alpine:3.15.0
+  # если хотим сделать деплой по кнопке
+  # rules:
+  #   - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  #     when: manual
+  #   - if: '$CI_COMMIT_BRANCH == "master"'
+  #     when: manual
   before_script:
-    #устанавливаем ssh-agent для удобства аутентификации по ssh
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - apk add openssh-client bash
     - eval $(ssh-agent -s)
-    #сохраняем сгенеренный ранее приватный ключ для раннера
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - chmod 600 ~/.ssh
+    - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
-    - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";export "PSQL_HOST=${PSQL_HOST}";export "PSQL_PORT=${PSQL_PORT}";export "PSQL_DBNAME=${PSQL_DBNAME}";export "PSQL_USER=${PSQL_USER}";export "PSQL_PASSWORD=${PSQL_PASSWORD}";export "MONGO_USER=${MONGO_USER}";export "MONGO_PASSWORD=${MONGO_PASSWORD}";export "MONGO_HOST=${MONGO_HOST}";export "MONGO_DATABASE=${MONGO_DATABASE}";setsid /bin/bash -s " < ./backend/deploy.sh
-  environment:
-    name: staging
-    url: https://sausage-store-stage.ru
+    - scp ${env_file} ${DEV_USER}@${DEV_HOST}:/home/deployservice
+    - ssh ${DEV_USER}@${DEV_HOST}
+      "export "VERSION=${VERSION}";
+       export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
+       export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
+       export "CI_REGISTRY=${CI_REGISTRY}";
+      /bin/bash -s " < ./backend/backend_deploy.sh
