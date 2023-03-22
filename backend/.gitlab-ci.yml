@@ -82,7 +82,7 @@ deploy-backend:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - echo "The before_script '${VERSION}'"
+    - scp ${env_file} ${DEV_USER}@${DEV_HOST}:/home/deployservice
     - ssh ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
        export "SPRING_DATASOURCE_URL=${PSQL_DATASOURCE}";
