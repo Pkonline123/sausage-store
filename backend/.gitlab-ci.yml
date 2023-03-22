@@ -81,10 +81,9 @@ deploy-backend:
     - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - echo '${PSQL_DATASOURCE}'
-    - echo 123
+    - echo "The before_script '$PSQL_DATASOURCE'"
   script:
-    - echo '${PSQL_DATASOURCE}'
+    - echo "The script '$PSQL_DATASOURCE'"
     - ssh ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
        export "SPRING_DATASOURCE_URL=${PSQL_DATASOURCE}";
