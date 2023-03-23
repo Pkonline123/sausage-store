@@ -30,7 +30,7 @@ public class SausageApplication {
             productService.save(new Product(3L, "Молочная", 225.00, "https://storage.yandexcloud.net/std-013-20-images/4.jpg"));
             productService.save(new Product(4L, "Нюренбергская", 315.00, "https://storage.yandexcloud.net/std-013-20-images/3.jpg"));
             productService.save(new Product(5L, "Мюнхенская", 330.00, "https://storage.yandexcloud.net/std-013-20-images/2.jpg"));
-            productService.save(new Product(6L, "Американская", 189.00, "https://storage.yandexcloud.net/std-013-20-images/1.jpg"))
+            productService.save(new Product(6L, "Американская", 189.00, "https://storage.yandexcloud.net/std-013-20-images/1.jpg"));
         };
     }
 }
