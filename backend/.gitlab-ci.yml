@@ -92,7 +92,4 @@ deploy-backend:
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
        export "CI_REGISTRY=${CI_REGISTRY}";
-       #echo SPRING_DATASOURCE_PASSWORD=$(vault kv get -field=spring.datasource.password secret/sausage-store) >> /home/deployservice/env_file
-       #echo SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store-username) >> /home/deployservice/env_file
-       #echo SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.data.mongodb.uri secret/sausage-store-mongo) >> /home/deployservice/env_file
       /bin/bash -s " < ./backend/backend_deploy.sh
