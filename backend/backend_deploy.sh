@@ -6,7 +6,7 @@ docker pull gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-b
 docker stop backend || true
 docker rm backend || true
 set -e
-docker run -v /home/student/logsBackDocker:/app/logs -d --name backend --env=${SPRING_DATASOURCE_PASSWORD} \
+docker run -v /home/student/logsBackDocker:/app/logs -d --name backend \
     --network=sausage_network \
     --restart always \
     --pull always \
