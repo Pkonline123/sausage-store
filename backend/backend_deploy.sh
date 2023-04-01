@@ -1,5 +1,6 @@
 #!/bin/bash
 set +e
+export VAULT_TOKEN=${VAULT_TOKEN}
 docker network create -d bridge sausage_network || true
 docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
 docker pull gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-backend:latest
