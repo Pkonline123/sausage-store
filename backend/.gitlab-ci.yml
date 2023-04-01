@@ -82,7 +82,7 @@ deploy-backend:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=${CI_JOB_JWT})"
+    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
     - scp ${env_file} ${DEV_USER}@${DEV_HOST}:/home/deployservice
     - ssh ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
