@@ -86,6 +86,7 @@ deploy-backend:
     - echo "" >> ${env_file}
     - echo SPRING_DATASOURCE_PASSWORD=$(vault kv get -field=spring.datasource.password secret/sausage-store) >> ${env_file}
     - echo SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store) >> ${env_file}
+    - echo SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.data.mongodb.uri secret/sausage-store) >> ${env_file}
     - scp ${env_file} ${DEV_USER}@${DEV_HOST}:/home/deployservice
     - ssh ${DEV_USER}@${DEV_HOST}
        "export "VERSION=${VERSION}";
