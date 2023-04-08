@@ -85,10 +85,11 @@ deploy-backend-report:
     # - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
     # - echo "" >> ${env_file}
     # - echo SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.data.mongodb.uri secret/sausage-store) >> ${env_file}
+    - scp ${env_file_report} ${DEV_USER}@${DEV_HOST}:/home/deployservice
     - scp docker-compose.yml ${DEV_USER}@${DEV_HOST}:/home/deployservice
     - ssh ${DEV_USER}@${DEV_HOST}
        "export "VERSION=${VERSION}";
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
        export "CI_REGISTRY=${CI_REGISTRY}";
-      /bin/bash -s " < ./backend/backend_deploy.sh
+      /bin/bash -s " < ./backend/backend-report_deploy.sh
