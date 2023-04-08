@@ -19,7 +19,7 @@ stages:
   - release
   - deploy
 
-build-backend:
+build-backend-report:
   stage: build
   image: docker:20.10.12-dind-rootless
   before_script:
@@ -27,30 +27,30 @@ build-backend:
     # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cd backend
+    - cd backend-report
     - >
       docker build
       --build-arg VERSION=$VERSION
-      --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+      --tag $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
       .
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
 
-sonarqube-test-back:
-  stage: test
-  image: maven:3.8-openjdk-16
-  script:
-    - cd backend
-    - >
-      mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
-      -Dsonar.projectKey=${PROJECT_KEY_BACK}
-      -Dsonar.host.url=${SONARQUBE_URL}
-      -Dsonar.login=${LOGIN_BACK}
-      -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД
-  cache:
-    paths:
-      - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
+# sonarqube-test-back:
+#   stage: test
+#   image: maven:3.8-openjdk-16
+#   script:
+#     - cd backend
+#     - >
+#       mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
+#       -Dsonar.projectKey=${PROJECT_KEY_BACK}
+#       -Dsonar.host.url=${SONARQUBE_URL}
+#       -Dsonar.login=${LOGIN_BACK}
+#       -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД
+#   cache:
+#     paths:
+#       - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
 
-upload-backend-latest:
+upload-backend-report-latest:
   variables:
     GIT_STRATEGY: none
   image: docker:20.10.12-dind-rootless
@@ -59,12 +59,12 @@ upload-backend-latest:
     - until docker info; do sleep 1; done
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker pull $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    - docker pull $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
     # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
-    - docker tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend:latest
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
+    - docker tag $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/backend-report:latest
+    - docker push $CI_REGISTRY_IMAGE/backend-report:latest
 
-deploy-backend:
+deploy-backend-report:
   stage: deploy
   image: vault:1.11.3
   # если хотим сделать деплой по кнопке
@@ -82,12 +82,9 @@ deploy-backend:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
-    - echo "" >> ${env_file}
-    - echo SPRING_DATASOURCE_PASSWORD=$(vault kv get -field=spring.datasource.password secret/sausage-store) >> ${env_file}
-    - echo SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store) >> ${env_file}
-    - echo SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.data.mongodb.uri secret/sausage-store) >> ${env_file}
-    - scp ${env_file} ${DEV_USER}@${DEV_HOST}:/home/deployservice
+    # - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
+    # - echo "" >> ${env_file}
+    # - echo SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.data.mongodb.uri secret/sausage-store) >> ${env_file}
     - scp docker-compose.yml ${DEV_USER}@${DEV_HOST}:/home/deployservice
     - ssh ${DEV_USER}@${DEV_HOST}
        "export "VERSION=${VERSION}";

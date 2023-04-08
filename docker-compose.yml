@@ -2,33 +2,38 @@ version: "3.3"
 
 services:
   backend:
+    env_file:
+      - ./env_file
     image: gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-backend:latest
     container_name: sausage-store-backend
-    environment:
-      # Переменные из application.properties можно заменить переменными окружения
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      # $Env:SPRING_DATASOURCE_USERNAME
-      SPRING_DATASOURCE_URL: ${PSQL_DATASOURCE}
-      REPORT_PATH: ./logs
-      SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
+    # environment:
+    #   # Переменные из application.properties можно заменить переменными окружения
+    #   SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+    #   SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    #   # $Env:SPRING_DATASOURCE_USERNAME
+    #   SPRING_DATASOURCE_URL: ${PSQL_DATASOURCE}
+    #   REPORT_PATH: ./logs
+    #   SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
+    volumes:
+      - /home/student/logsBackDocker:/app/logs
     networks:
-      - sausage-store
+      - sausage_network
   backend-report:
     image: gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/backend-report:latest
     container_name: sausage-store-backend-report
     environment:
-      DB: ${REPORTS_MONGODB_URI}&tlsCaFile=YandexInternalRootCA.crt
-      PORT: ${PORT_GO}
+      DB: ${DATA_MONGODB}&tlsCaFile=YandexInternalRootCA.crt
+      PORT: 8081
     networks:
-      - sausage-store
+      - sausage_network
   frontend:
     image: gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-frontend:latest
     container_name: sausage-store-frontend
     ports:
       - "80:80"
     networks:
-      - sausage-store
+      - sausage_network
 
 networks:
-   sausage-store:
+   sausage_network:
+    driver: bridge
