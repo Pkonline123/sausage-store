@@ -23,6 +23,9 @@ services:
       - /home/deployservice/env_file_report
     image: gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/backend-report:latest
     container_name: backend-report
+    environment:
+      DB: mongodb://std-013-20:P%40ssw0rd@rc1a-xb6q7pmw36t77ryz.mdb.yandexcloud.net:27018/std-013-20?tls=true&tlsCaFile=YandexInternalRootCA.crt
+      PORT: 8081
     networks:
       - sausage_network
   frontend:
