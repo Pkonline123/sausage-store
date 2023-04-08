@@ -20,7 +20,7 @@ services:
       - sausage_network
   backend-report:
     env_file:
-      - ./env_file_report
+      - /home/deployservice/env_file_report
     image: gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/backend-report:latest
     container_name: backend-report
     networks:
