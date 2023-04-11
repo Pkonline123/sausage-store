@@ -66,6 +66,8 @@ upload-backend-report-latest:
     # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
     - docker tag $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/backend-report:latest
     - docker push $CI_REGISTRY_IMAGE/backend-report:latest
+  needs:
+    - sonarqube-test-back-report
 
 deploy-backend-report:
   stage: deploy
