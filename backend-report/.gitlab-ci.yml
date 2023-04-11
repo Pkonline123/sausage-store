@@ -12,6 +12,7 @@ variables:
 include:
   - project: 'templates/ci'
     file: 'DockerInDockerTemplate.yml'
+  - template: Security/SAST.gitlab-ci.yml
     
 stages:
   - build
@@ -41,10 +42,10 @@ sonarqube-test-back-report:
   script:
     - cd backend-report
     - >
-      sonar-scanner \
-      -Dsonar.projectKey=${KEY_REPORT} \
-      -Dsonar.sources=. \
-      -Dsonar.host.url=${SONARQUBE_URL} \
+      sonar-scanner
+      -Dsonar.projectKey=${KEY_REPORT}
+      -Dsonar.sources=.
+      -Dsonar.host.url=${SONARQUBE_URL}
       -Dsonar.login=${LOGIN_REPORT}
       -Dsonar.projectName=13___Зачитайлов_Репорт
   cache:
