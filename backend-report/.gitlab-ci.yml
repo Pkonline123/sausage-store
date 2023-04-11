@@ -8,6 +8,7 @@
 
 variables:
     VERSION: 1.0.${CI_PIPELINE_ID}
+    SAST_EXCLUDED_ANALYZERS: "eslint-sast, nodejs-scan-sast"
 
 include:
   - project: 'templates/ci'
