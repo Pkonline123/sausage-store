@@ -14,6 +14,7 @@ include:
   - remote: 'https://gitlab.com/gitlab-org/gitlab/-/raw/2851f4d5/lib/gitlab/ci/templates/Jobs/SAST.latest.gitlab-ci.yml'
   - project: 'templates/ci'
     file: 'DockerInDockerTemplate.yml'
+  - template: Security/SAST.gitlab-ci.yml
     
 stages:
   - build
@@ -37,14 +38,6 @@ build-backend-report:
       .
     - docker push $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
 
-gosec-sast:
-  extends: .sast-analyzer
-  # script:
-  #   - echo "This job was deprecated in GitLab 15.0 and removed in GitLab 15.2"
-  #   - echo "For more information see https://gitlab.com/gitlab-org/gitlab/-/issues/352554"
-  #   - exit 1
-  # rules:
-  #   - when: never
 sonarqube-test-back-report:
   stage: test
   image: sonarsource/sonar-scanner-cli
