@@ -37,16 +37,6 @@ build-backend-report:
       .
     - docker push $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
 
-.sast-analyzer:
-  extends: sast
-  allow_failure: true
-  # `rules` must be overridden explicitly by each child job
-  # see https://gitlab.com/gitlab-org/gitlab/-/issues/218444
-  before_script:
-   - echo -e "[url \"https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/\"]\n\tinsteadOf = https://gitlab.com/" | tee -a ~/.gitconfig
-  script:
-    - /analyzer run
-
 sonarqube-test-back-report:
   stage: test
   image: sonarsource/sonar-scanner-cli

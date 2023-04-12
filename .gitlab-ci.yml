@@ -27,8 +27,6 @@ backend:
 
 backend-report:
   stage: module-pipelines
-  script:
-    - cd backend-report
   variables:
     SAST_EXCLUDED_ANALYZERS: "eslint-sast, nodejs-scan-sast, spotbugs-sast"
   trigger:
