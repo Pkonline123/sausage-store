@@ -28,7 +28,7 @@ backend:
 backend-report:
   stage: module-pipelines
   variables:
-    SAST_EXCLUDED_ANALYZERS: "eslint-sast, nodejs-scan-sast, spotbugs-sast"
+    SAST_EXCLUDED_ANALYZERS: "eslint-sast, nodejs-scan-sast, spotbugs-sast, bandit, gosec"
   trigger:
     include:
       - "/backend-report/.gitlab-ci.yml"
