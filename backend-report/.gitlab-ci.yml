@@ -42,6 +42,7 @@ build-backend-report:
     - docker push $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
 
 go-gosec-customruleset-config-qa:
+  stage: test
   extends: .qa-downstream-sast
   variables:
     SAST_REPORT_URL: "$CI_PROJECT_URL/raw/$CI_COMMIT_REF_NAME/qa/expect/gosec-custom-ruleset/gl-sast-report.json"
