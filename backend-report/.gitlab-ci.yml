@@ -14,7 +14,9 @@ variables:
 include:
   - project: 'templates/ci'
     file: 'DockerInDockerTemplate.yml'
-  - template: Security/SAST.gitlab-ci.yml
+  - https://gitlab.com/gitlab-org/security-products/ci-templates/raw/master/includes-dev/analyzer.yml
+
+  # - template: Security/SAST.gitlab-ci.yml
   # - remote: 'https://gitlab.com/gitlab-org/gitlab/-/raw/2851f4d5/lib/gitlab/ci/templates/Jobs/SAST.latest.gitlab-ci.yml'
 
 stages:
@@ -38,6 +40,11 @@ build-backend-report:
       --tag $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
       .
     - docker push $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
+
+go-gosec-customruleset-config-qa:
+  extends: .qa-downstream-sast
+  variables:
+    SAST_REPORT_URL: "$CI_PROJECT_URL/raw/$CI_COMMIT_REF_NAME/qa/expect/gosec-custom-ruleset/gl-sast-report.json"
 
 sonarqube-test-back-report:
   stage: test
