@@ -12,14 +12,16 @@ variables:
 include:
   - project: 'templates/ci'
     file: 'DockerInDockerTemplate.yml'
-    
+  # - template: Security/SAST.gitlab-ci.yml
+  - remote: 'https://gitlab.com/gitlab-org/gitlab/-/raw/2851f4d5/lib/gitlab/ci/templates/Jobs/SAST.latest.gitlab-ci.yml'
+
 stages:
   - build
   - test
   - release
   - deploy
 
-build-backend:
+build-backend-report:
   stage: build
   image: docker:20.10.12-dind-rootless
   before_script:
@@ -27,30 +29,31 @@ build-backend:
     # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cd backend
+    - cd backend-report
     - >
       docker build
       --build-arg VERSION=$VERSION
-      --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+      --tag $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
       .
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
 
-sonarqube-test-back:
+sonarqube-test-back-report:
   stage: test
-  image: maven:3.8-openjdk-16
+  image: sonarsource/sonar-scanner-cli
   script:
-    - cd backend
+    - cd backend-report
     - >
-      mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
-      -Dsonar.projectKey=${PROJECT_KEY_BACK}
+      sonar-scanner
+      -Dsonar.projectKey=${KEY_REPORT}
+      -Dsonar.sources=.
       -Dsonar.host.url=${SONARQUBE_URL}
-      -Dsonar.login=${LOGIN_BACK}
-      -Dsonar.projectName=13__ЗАЧИТАЙЛОВАНДРЕЙ_БЭКЭНД
+      -Dsonar.login=${LOGIN_REPORT}
+      -Dsonar.projectName=13___Зачитайлов_Репорт
   cache:
     paths:
-      - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
+      - .app/ # для хранения зависимостей репорт
 
-upload-backend-latest:
+upload-backend-report-latest:
   variables:
     GIT_STRATEGY: none
   image: docker:20.10.12-dind-rootless
@@ -59,12 +62,14 @@ upload-backend-latest:
     - until docker info; do sleep 1; done
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker pull $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    - docker pull $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA
     # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
-    - docker tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend:latest
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
+    - docker tag $CI_REGISTRY_IMAGE/backend-report:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/backend-report:latest
+    - docker push $CI_REGISTRY_IMAGE/backend-report:latest
+  needs:
+    - sonarqube-test-back-report
 
-deploy-backend:
+deploy-backend-report:
   stage: deploy
   image: vault:1.11.3
   # если хотим сделать деплой по кнопке
@@ -83,15 +88,13 @@ deploy-backend:
     - chmod 644 ~/.ssh/known_hosts
   script:
     - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
-    - echo "" >> ${env_file}
-    - echo SPRING_DATASOURCE_PASSWORD=$(vault kv get -field=spring.datasource.password secret/sausage-store) >> ${env_file}
-    - echo SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store) >> ${env_file}
-    - echo SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.data.mongodb.uri secret/sausage-store) >> ${env_file}
-    - scp ${env_file} ${DEV_USER}@${DEV_HOST}:/home/deployservice
+    - echo "" >> ${env_file_report}
+    - echo DB=$(vault kv get -field=spring.data.mongodb.uri secret/sausage-store) >> ${env_file_report}
+    - scp ${env_file_report} ${DEV_USER}@${DEV_HOST}:/home/deployservice
     - scp docker-compose.yml ${DEV_USER}@${DEV_HOST}:/home/deployservice
     - ssh ${DEV_USER}@${DEV_HOST}
        "export "VERSION=${VERSION}";
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
        export "CI_REGISTRY=${CI_REGISTRY}";
-      /bin/bash -s " < ./backend/backend_deploy.sh
+      /bin/bash -s " < ./backend-report/backend-report_deploy.sh

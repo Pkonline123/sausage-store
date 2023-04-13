@@ -19,7 +19,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 # Get Yandex Cloud Certificate Authority
 RUN curl https://storage.yandexcloud.net/cloud-certs/CA.pem -o YandexInternalRootCA.crt
 
-
 ######## Start a new stage from scratch #######
 FROM alpine:latest  
 
@@ -34,7 +33,7 @@ COPY --from=builder /app/YandexInternalRootCA.crt .
 COPY --from=builder /app/main .
 
 # Expose port 8080 to the outside world
-EXPOSE 8080
+EXPOSE 8081
 
 # Command to run the executable
 CMD ["./main"] 

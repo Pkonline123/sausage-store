@@ -1,0 +1,41 @@
+version: "3.3"
+
+services:
+  backend:
+    env_file:
+      - ./env_file
+    image: gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-backend:latest
+    container_name: backend
+    # environment:
+    #   # Переменные из application.properties можно заменить переменными окружения
+    #   SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+    #   SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    #   # $Env:SPRING_DATASOURCE_USERNAME
+    #   SPRING_DATASOURCE_URL: ${PSQL_DATASOURCE}
+    #   REPORT_PATH: ./logs
+    #   SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
+    volumes:
+      - /home/student/logsBackDocker:/app/logs
+    networks:
+      - sausage_network
+  backend-report:
+    # env_file:
+    #   - /home/deployservice/env_file_report
+    image: gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/backend-report:latest
+    container_name: backend-report
+    environment:
+      DB: mongodb://std-013-20:P%40ssw0rd@rc1a-xb6q7pmw36t77ryz.mdb.yandexcloud.net:27018/std-013-20?tls=true&tlsCaFile=YandexInternalRootCA.crt
+      PORT: 8081
+    networks:
+      - sausage_network
+  frontend:
+    image: gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-frontend:latest
+    container_name: frontend
+    ports:
+      - "80:80"
+    networks:
+      - sausage_network
+
+networks:
+   sausage_network:
+    driver: bridge
