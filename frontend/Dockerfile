@@ -16,8 +16,8 @@ RUN npm install \
 #release
 FROM nginxproxy/nginx-proxy
 WORKDIR /app
-RUN chmod -R 777 /usr/share/nginx/html
-RUN chmod -R 777 /app
+# RUN chmod -R 777 /usr/share/nginx/html
+# RUN chmod -R 777 /app
 COPY --from=build /usr/src/app/dist/frontend /usr/share/nginx/html
 COPY ./nginx.tmpl /app
 # RUN npm install -g http-server
