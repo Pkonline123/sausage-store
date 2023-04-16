@@ -38,7 +38,7 @@ services:
   #     - sausage_network
 
   loadbalancer:
-    container_name: nginx
+    container_name: frontend
     image: nginxproxy/nginx-proxy
     ports:
       - "80:80"
