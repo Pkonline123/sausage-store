@@ -1,11 +1,11 @@
 version: "3.3"
 
 services:
-  backend:
+  backend_blue:
     env_file:
       - ./env_file
     image: gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-backend:latest
-    container_name: backend
+    container_name: blue
     environment:
       - VIRTUAL_HOST=backend
     #   # Переменные из application.properties можно заменить переменными окружения
@@ -17,6 +17,36 @@ services:
     #   SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
     volumes:
       - /home/student/logsBackDocker:/app/logs
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 6 
+    networks:
+      - sausage_network
+  backend_green:
+    env_file:
+      - ./env_file
+    image: gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-backend:latest
+    container_name: green
+    environment:
+      - VIRTUAL_HOST=backend
+    #   # Переменные из application.properties можно заменить переменными окружения
+    #   SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+    #   SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    #   # $Env:SPRING_DATASOURCE_USERNAME
+    #   SPRING_DATASOURCE_URL: ${PSQL_DATASOURCE}
+    #   REPORT_PATH: ./logs
+    #   SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
+    volumes:
+      - /home/student/logsBackDocker:/app/logs
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 6 
     networks:
       - sausage_network
   backend-report:
