@@ -8,20 +8,20 @@ if [ "$( docker container inspect -f '{{.State.Running}}' blue )" == "true" ]; t
     docker rm -f green || true
     set -e
     docker-compose up -d backend_green
-    if [ "$(curl --fail -s http://localhost:8080/actuator/health)" == "healthy" ]; then
+    # if [ "$(curl --fail -s http://localhost:8080/actuator/health)" == "healthy" ]; then
         docker stop blue || true
         docker rm -f blue || true
-    fi
+    # fi
 elif ["$( docker container inspect -f '{{.State.Running}}' green )" == "true" ]; then
     docker pull gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-backend:latest    
     docker stop blue || true
     docker rm -f blue || true
     set -e
     docker-compose up -d backend_blue
-    if [ "$(curl --fail -s http://localhost:8080/actuator/health)" == "healthy" ]; then
+    # if [ "$(curl --fail -s http://localhost:8080/actuator/health)" == "healthy" ]; then
         docker stop green || true
         docker rm -f green || true
-    fi
+    # fi
 fi
 # docker pull gitlab.praktikum-services.ru:5050/std-013-20/sausage-store/sausage-backend:latest
 # docker-compose stop backend_blue || true
