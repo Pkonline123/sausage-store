@@ -8,7 +8,8 @@ if [ "$( docker container inspect -f '{{.State.Running}}' blue )" == "true" ]; t
     docker rm -f green || true
     set -e
     docker-compose up -d backend_green
-    while [[ $(docker container inspect -f '{{.State.Health.Status}}' green) != 'healthy' ]]
+    # while [[ $(docker container inspect -f '{{.State.Health.Status}}' green) != 'healthy' ]]
+    while [ true ]
     do
         echo unhealthy
         if [[ $(docker container inspect -f '{{.State.Health.Status}}' green) == 'healthy' ]]; then
@@ -23,7 +24,8 @@ elif [ "$( docker container inspect -f '{{.State.Running}}' green )" == "true" ]
     docker rm -f blue || true
     set -e
     docker-compose up -d backend_blue
-    while [[ $(docker container inspect -f '{{.State.Health.Status}}' blue) != 'healthy' ]]
+    # while [[ $(docker container inspect -f '{{.State.Health.Status}}' blue) != 'healthy' ]]
+    while [ true ]
     do
         echo unhealthy
         if [[ $(docker container inspect -f '{{.State.Health.Status}}' blue) == 'healthy' ]]; then
