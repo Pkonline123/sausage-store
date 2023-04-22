@@ -20,9 +20,9 @@ services:
     healthcheck:
       test: curl --fail -s http://localhost:8080/actuator/health
       interval: 30s
-      timeout: 10s
+      timeout: 30s
       start_period: 20s
-      retries: 6 
+      retries: 10 
     networks:
       - sausage_network
   backend_green:
@@ -44,9 +44,9 @@ services:
     healthcheck:
       test: curl --fail -s http://localhost:8080/actuator/health
       interval: 30s
-      timeout: 10s
+      timeout: 30s
       start_period: 20s
-      retries: 6 
+      retries: 10 
     networks:
       - sausage_network
   backend-report:
