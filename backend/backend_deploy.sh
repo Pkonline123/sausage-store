@@ -8,10 +8,13 @@ if [ "$( docker container inspect -f '{{.State.Running}}' blue )" == "true" ]; t
     docker rm -f green || true
     set -e
     docker-compose up -d backend_green
-    # while [ $(docker exec -it green curl --fail -s http://localhost:8080/actuator/health) != {"status":"UP"} ]
-    # do
-    #         echo unhealthy
-    # done
+    while [ $(docker exec -it green curl --fail -s http://localhost:8080/actuator/health) != '{"status":"UP"}' ]
+    do
+        echo unhealthy
+        if [ $(docker exec -it green curl --fail -s http://localhost:8080/actuator/health) == '{"status":"UP"}' ]; then
+                break
+        fi
+    done
     docker stop blue || true
     docker rm -f blue || true
 elif [ "$( docker container inspect -f '{{.State.Running}}' green )" == "true" ]; then
@@ -20,10 +23,13 @@ elif [ "$( docker container inspect -f '{{.State.Running}}' green )" == "true" ]
     docker rm -f blue || true
     set -e
     docker-compose up -d backend_blue
-    # while [ $(docker exec -it green curl --fail -s http://localhost:8080/actuator/health) == {"status":"UP"} ]
-    # do
-    #         echo unhealthy
-    # done
+    while [ $(docker exec -it blue curl --fail -s http://localhost:8080/actuator/health) != '{"status":"UP"}' ]
+    do
+        echo unhealthy
+        if [ $(docker exec -it blue curl --fail -s http://localhost:8080/actuator/health) == '{"status":"UP"}' ]; then
+                break
+        fi
+    done
     docker stop green || true
     docker rm -f green || true
 fi
